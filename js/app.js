@@ -369,7 +369,7 @@ function renderReviewCard() {
 // ---- Stats screen -----------------------------------------------------------
 function dailyShlokaCard() {
   const today = todayKey();
-  const card = el('div', { class: 'tool-card' });
+  const card = el('div', { class: 'tool-card daily-shloka-card' });
   card.appendChild(el('div', { class: 'tool-head' }, [
     el('h4', { text: '📿 Verse of the Day' }),
     el('span', { class: 'pill', text: state.dailyShloka.date === today ? 'Today' : 'New' })

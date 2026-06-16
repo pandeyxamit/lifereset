@@ -117,8 +117,9 @@ body {
 .book-config button { background: var(--mental); border: none; color: white; padding: 6px 12px; border-radius: 8px; font-weight: 600; }
 
 /* Tool cards (review, hydration, timers, backup) */
-.tool-card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); }
-.tool-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.tool-card { background: var(--card); border-radius: 16px; padding: 16px; margin: 18px 0; border: 1px solid rgba(255,255,255,0.03); }
+.tool-card.daily-shloka-card { margin-top: 28px; }
+.tool-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .tool-head h4 { margin: 0; font-size: 1rem; }
 .pill { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(255,255,255,0.06); color: var(--text-muted); }
 .muted { color: var(--text-muted); font-size: 0.82rem; }
