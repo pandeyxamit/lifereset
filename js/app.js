@@ -298,6 +298,9 @@ function renderToday() {
   else bannerText = `Day ${currentDay} of ${TOTAL_DAYS} — ${state.streak} Day Hot Streak 🔥`;
   frag.appendChild(el('div', { class: 'streak-counter', id: 'streak-banner', text: bannerText }));
 
+  // Verse of the day at the top of the homepage
+  frag.appendChild(dailyShlokaCard());
+
   // Dashboards
   const dash = el('div', { class: 'dashboard-container' });
   dash.appendChild(rpgCard('phys', `STAMINA LVL ${state.p_lvl}`, 'PHYSICAL XP', state.p_xp));
@@ -312,18 +315,6 @@ function renderToday() {
   });
   if (nudge) frag.appendChild(el('div', { class: 'nudge', text: nudge }));
 
-  // Book config banner
-  const targets = computeTargets(currentDay);
-  const book = el('div', { class: 'book-config', id: 'book-banner' });
-  if (state.bookTotalPages > 0) {
-    book.appendChild(el('span', { html: `📖 Allocation: <b>${targets.pagesPerDay} pages/day</b> to finish the book.` }));
-    book.appendChild(el('button', { dataset: { action: 'setup-book' }, text: 'Edit' }));
-  } else {
-    book.appendChild(el('span', { text: '📖 Set your Valmiki Ramayan length' }));
-    book.appendChild(el('button', { dataset: { action: 'setup-book' }, text: 'Setup' }));
-  }
-  frag.appendChild(book);
-
   // Quests
   frag.appendChild(el('div', { class: 'section-title', text: currentDay > 0 ? `Today's Strategy Quests (Day ${currentDay})` : 'Strategy Quests (Preview)' }));
   const box = el('div', { class: 'quest-box' });
@@ -332,31 +323,41 @@ function renderToday() {
   }
   frag.appendChild(box);
 
-  // Daily review summary
+  // Daily review - auto-start if cards are due
   const due = dueCount();
+  if (!review.active && due > 0) {
+    review = { active: true, cards: getDueCards(), i: 0, flipped: false };
+  }
+
   const reviewCard = el('div', { class: 'tool-card daily-flashcard-card' });
   reviewCard.appendChild(el('div', { class: 'tool-head' }, [
     el('h4', { text: '📚 Daily Flashcards' }),
     el('span', { class: 'pill', text: due > 0 ? `${due} due` : 'all clear' })
   ]));
-  reviewCard.appendChild(el('button', {
-    class: 'btn btn-mental full', dataset: { action: 'start-review-modal' },
-    text: due > 0 ? `Review ${due} card${due === 1 ? '' : 's'}` : 'Browse decks'
-  }));
-  frag.appendChild(reviewCard);
 
-  // Verse of the day on the homepage
-  frag.appendChild(dailyShlokaCard());
-
-  // If a review session is active, render the inline review UI here (no redirect)
   if (review.active && review.i < review.cards.length) {
-    frag.appendChild(renderReviewCard());
+    // Show the inline flashcard
+    reviewCard.appendChild(renderReviewCard());
+  } else if (due > 0) {
+    // Fallback button if review isn't active but cards are due
+    reviewCard.appendChild(el('button', {
+      class: 'btn btn-mental full', dataset: { action: 'start-review-modal' },
+      text: `Review ${due} card${due === 1 ? '' : 's'}`
+    }));
+  } else {
+    // All cards reviewed
+    reviewCard.appendChild(el('button', {
+      class: 'btn btn-mental full', dataset: { action: 'goto-cards' },
+      text: 'Browse decks'
+    }));
   }
+  frag.appendChild(reviewCard);
 
   // Hydration quick-add
   frag.appendChild(hydrationCard());
 
   // Workout timers
+  const targets = computeTargets(currentDay);
   frag.appendChild(workoutCard(targets));
 
   // 66-day grid
