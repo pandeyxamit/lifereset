@@ -7,12 +7,12 @@ export const SCHEMA_VERSION = 2;
 // The six built-in quests. desc is filled dynamically for `dynamic` ones.
 function defaultQuests() {
   return [
-    { id: 1, name: 'Endurance Run / Power Walk', desc: '', category: 'physical', val: 20, done: false, dynamic: 'run', builtin: true },
-    { id: 2, name: 'Bodyweight Stamina Circuit', desc: '', category: 'physical', val: 20, done: false, dynamic: 'circuit', builtin: true },
-    { id: 3, name: 'Strategic Hydration Target', desc: 'Consume 3.0 Liters of pure water before your wind-down.', category: 'physical', val: 15, done: false, dynamic: 'water', builtin: true },
-    { id: 4, name: 'Valmiki Ramayan Deep Study', desc: 'Read your target page allocation.', category: 'mental', val: 35, done: false, dynamic: 'book', builtin: true },
-    { id: 5, name: 'Silent Mental Awareness Walk', desc: '15 mins walking outdoors without tech or distractions.', category: 'mental', val: 15, done: false, dynamic: null, builtin: true },
-    { id: 6, name: 'Digital Sunset Recovery', desc: 'No phone, laptop, or blue-light screens 45 minutes before sleeping.', category: 'mental', val: 15, done: false, dynamic: null, builtin: true }
+    { id: 1, name: 'Endurance Run / Power Walk', desc: '', category: 'physical', val: 10, done: false, dynamic: 'run', builtin: true },
+    { id: 2, name: 'Bodyweight Stamina Circuit', desc: '', category: 'physical', val: 10, done: false, dynamic: 'circuit', builtin: true },
+    { id: 3, name: 'Strategic Hydration Target', desc: 'Consume 3.0 Liters of pure water before your wind-down.', category: 'physical', val: 12, done: false, dynamic: 'water', builtin: true },
+    { id: 4, name: 'Valmiki Ramayan Deep Study', desc: 'Read your target page allocation.', category: 'mental', val: 15, done: false, dynamic: 'book', builtin: true },
+    { id: 5, name: 'Silent Mental Awareness Walk', desc: '15 mins walking outdoors without tech or distractions.', category: 'mental', val: 12, done: false, dynamic: null, builtin: true },
+    { id: 6, name: 'Digital Sunset Recovery', desc: 'No phone, laptop, or blue-light screens 45 minutes before sleeping.', category: 'mental', val: 12, done: false, dynamic: null, builtin: true }
   ];
 }
 

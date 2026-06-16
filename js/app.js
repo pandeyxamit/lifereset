@@ -199,7 +199,7 @@ function rpgCard(kind, lvlText, label, xp) {
   const card = el('div', { class: 'rpg-card' });
   card.appendChild(el('span', { class: `badge ${kind}`, text: lvlText }));
   card.appendChild(el('div', { class: 'xp-label' }, [
-    el('span', { text: label }), el('span', { text: `${xp}/100` })
+    el('span', { text: label }), el('span', { text: `${xp} XP` })
   ]));
   const bg = el('div', { class: 'bar-bg' });
   bg.appendChild(el('div', { class: `bar-fill ${kind}`, style: { width: `${xp}%` } }));

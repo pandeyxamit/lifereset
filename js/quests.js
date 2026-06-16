@@ -8,14 +8,14 @@ import { calculateCurrentDayNumber, TOTAL_DAYS } from './util.js';
 export function computeTargets(dayNumber, bookTotalPages = state.bookTotalPages) {
   const day = dayNumber > 0 ? dayNumber : 1;
 
-  // Progressive overload: +30s run per day.
-  const runTotalSeconds = 1800 + (day - 1) * 30;
+  // Progressive overload: start humbly and add one minute of low-impact endurance per day.
+  const runTotalSeconds = 600 + (day - 1) * 60;
   const runMin = Math.floor(runTotalSeconds / 60);
   const runSec = runTotalSeconds % 60;
   const runText = runSec > 0 ? `${runMin}m ${runSec}s` : `${runMin} mins`;
 
-  const reps = 10 + Math.floor((day - 1) * 0.5);
-  const plankSeconds = 20 + (day - 1);
+  const reps = 8 + Math.floor((day - 1) * 0.3);
+  const plankSeconds = 15 + Math.floor((day - 1) * 0.5);
   const pagesPerDay = bookTotalPages > 0 ? Math.ceil(bookTotalPages / TOTAL_DAYS) : 0;
 
   return { runTotalSeconds, runText, reps, plankSeconds, pagesPerDay };
@@ -24,17 +24,28 @@ export function computeTargets(dayNumber, bookTotalPages = state.bookTotalPages)
 // Fill in descriptions for dynamic built-in quests.
 export function updateDynamicQuests() {
   const t = computeTargets(calculateCurrentDayNumber());
+  const xpFor = {
+    run: 10 + Math.floor((t.runTotalSeconds - 600) / 120),
+    circuit: 10 + Math.floor((t.reps - 8) * 1.5),
+    water: 12,
+    book: 15 + Math.floor((t.pagesPerDay - 35) * 0.3)
+  };
+
   for (const q of state.quests) {
     if (q.dynamic === 'run') {
       q.desc = `Run or Power Walk for minimum ${t.runText}. Focus on steady deep stamina breathing.`;
+      q.val = xpFor.run;
     } else if (q.dynamic === 'circuit') {
       q.desc = `3 sets: Pushups (${t.reps} reps), Squats (${t.reps} reps), Planks (${t.plankSeconds}s) & Lunges to structural failure.`;
+      q.val = xpFor.circuit;
     } else if (q.dynamic === 'water') {
       q.desc = `Consume 3.0 Liters of pure water. Tip: finish 1.5L before noon to avoid disrupting sleep.`;
+      q.val = xpFor.water;
     } else if (q.dynamic === 'book') {
       q.desc = t.pagesPerDay > 0
         ? `Read exactly ${t.pagesPerDay} pages today to fulfill your Gita Press narrative roadmap.`
         : 'Set your book length in Settings to get a daily page target.';
+      q.val = xpFor.book;
     }
   }
 }

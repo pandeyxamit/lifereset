@@ -55,13 +55,13 @@ function dayNumber(cfg) {
 
 function targetsFor(day, cfg) {
   const d = Math.max(1, day);
-  const runSec = 1800 + (d - 1) * 30;
+  const runSec = 600 + (d - 1) * 60;
   const m = Math.floor(runSec / 60);
   const s = runSec % 60;
   return {
     run: s > 0 ? `${m}m ${s}s` : `${m} min`,
-    reps: 10 + Math.floor((d - 1) * 0.5),
-    plank: 20 + (d - 1),
+    reps: 8 + Math.floor((d - 1) * 0.3),
+    plank: 15 + Math.floor((d - 1) * 0.5),
     pages: Math.ceil((cfg.bookTotalPages || 2304) / (cfg.totalDays || 66))
   };
 }

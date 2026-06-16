@@ -5,9 +5,9 @@
   "bookTotalPages": 2304,
   "note": "Static config read by both the web app and the optional Scriptable lock-screen widget. The widget computes each day's targets from these formulas so it never needs a backend.",
   "formulas": {
-    "runTotalSeconds": "1800 + (day - 1) * 30",
-    "reps": "10 + floor((day - 1) * 0.5)",
-    "plankSeconds": "20 + (day - 1)",
+    "runTotalSeconds": "600 + (day - 1) * 60",
+    "reps": "8 + floor((day - 1) * 0.3)",
+    "plankSeconds": "15 + floor((day - 1) * 0.5)",
     "pagesPerDay": "ceil(bookTotalPages / totalDays)",
     "waterMl": 3000
   },
