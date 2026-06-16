@@ -50,6 +50,8 @@ async function fetchDailyShloka() {
     // Prioritized endpoints to try (name, url). The URLs include common quote APIs
     // and candidate Bhagavad Gita API endpoints per user references.
     const endpoints = [
+      { name: 'Shloka.vercel (preferred)', url: 'https://shloka.vercel.app/api/random' },
+      { name: 'Shloka.vercel (alt)', url: 'https://shloka.vercel.app/api/shloka/random' },
       { name: 'ZenQuotes', url: 'https://zenquotes.io/api/random' },
       { name: 'Quotable', url: 'https://api.quotable.io/random' },
       { name: 'BhagavadGita-Vercel', url: 'https://bhagavad-gita-api.vercel.app/api/verses/random' },
