@@ -25,6 +25,44 @@ let activeTab = 'today';
 let runSW = null;
 let plankCD = null;
 let review = { active: false, cards: [], i: 0, flipped: false };
+let dailyShlokaLoading = false;
+let dailyShlokaError = '';
+
+const FALLBACK_SHLOKAS = [
+  { text: 'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत। अभ्युत्थानम् अधर्मस्य तदाऽआत्मानं सृजाम्यहम्॥', author: 'Bhagavad Gita 4.7' },
+  { text: 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन। मा कर्मफलहेतुर्भूर्मा ते संगोऽस्त्वकर्मणि॥', author: 'Bhagavad Gita 2.47' },
+  { text: 'सत्त्वमात्मनि प्रतिष्ठितम् आत्मवत्पश्यति यत्। सर्वथा स एव न सत्त्वेति सोऽयं न पश्यति किञ्चन॥', author: 'Yoga Sutras' },
+  { text: 'शरीरमाद्यं खलु धर्मसाधनमिति स्मृतम्।', author: 'Manu Smriti' },
+  { text: 'विद्या विहीनं धनं नित्यं व्यापरमोहिनीम्। व्यर्थं प्राणिनां मध्ये तदश्च श्रेष्ठमपि वा॥', author: 'Mahabharata' }
+];
+
+function pickFallbackShloka() {
+  return FALLBACK_SHLOKAS[Math.floor(Math.random() * FALLBACK_SHLOKAS.length)];
+}
+
+async function fetchDailyShloka() {
+  const today = todayKey();
+  if (state.dailyShloka.date === today && state.dailyShloka.text) return;
+  dailyShlokaLoading = true;
+  dailyShlokaError = '';
+  try {
+    const res = await fetch('https://zenquotes.io/api/random', { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const item = Array.isArray(data) ? data[0] : data;
+    const quote = item?.q || item?.text || '';
+    const author = item?.a || item?.author || 'Unknown';
+    if (!quote) throw new Error('No quote data');
+    state.dailyShloka = { date: today, text: quote, author, source: 'ZenQuotes' };
+  } catch (e) {
+    const fallback = pickFallbackShloka();
+    state.dailyShloka = { date: today, text: fallback.text, author: fallback.author, source: 'Offline fallback' };
+    dailyShlokaError = 'Could not fetch online verse; showing fallback instead.';
+  } finally {
+    dailyShlokaLoading = false;
+    commitToDevice();
+  }
+}
 
 // ---- Boot -------------------------------------------------------------------
 function boot() {
@@ -279,6 +317,8 @@ function renderCards() {
   }
   frag.appendChild(summary);
 
+  frag.appendChild(dailyShlokaCard());
+
   // Decks
   frag.appendChild(el('div', { class: 'section-title', text: 'Your Decks' }));
   for (const deck of getDecks()) {
@@ -327,6 +367,38 @@ function renderReviewCard() {
 }
 
 // ---- Stats screen -----------------------------------------------------------
+function dailyShlokaCard() {
+  const today = todayKey();
+  const card = el('div', { class: 'tool-card' });
+  card.appendChild(el('div', { class: 'tool-head' }, [
+    el('h4', { text: '📿 Verse of the Day' }),
+    el('span', { class: 'pill', text: state.dailyShloka.date === today ? 'Today' : 'New' })
+  ]));
+
+  if (dailyShlokaError) {
+    card.appendChild(el('p', { class: 'muted', text: dailyShlokaError }));
+  }
+
+  if (state.dailyShloka.date === today && state.dailyShloka.text) {
+    card.appendChild(el('p', { class: 'muted', text: state.dailyShloka.text }));
+    if (state.dailyShloka.author) card.appendChild(el('p', { class: 'muted', text: `— ${state.dailyShloka.author}` }));
+    if (state.dailyShloka.source) card.appendChild(el('p', { class: 'muted', text: `source: ${state.dailyShloka.source}` }));
+  } else {
+    card.appendChild(el('p', { class: 'muted', text: 'Tap to fetch a fresh verse or devotional shloka from the internet.' }));
+  }
+
+  const row = el('div', { class: 'btn-row' });
+  row.appendChild(el('button', {
+    class: 'btn btn-mental full', dataset: { action: 'fetch-daily-shloka' },
+    text: dailyShlokaLoading ? 'Fetching…' : 'Fetch Verse'
+  }));
+  if (state.dailyShloka.date === today && state.dailyShloka.text) {
+    row.appendChild(el('button', { class: 'btn ghost full', dataset: { action: 'clear-daily-shloka' }, text: 'Clear' }));
+  }
+  card.appendChild(row);
+  return card;
+}
+
 function renderStats() {
   const currentDay = calculateCurrentDayNumber();
   const s = computeStats(currentDay);
@@ -469,6 +541,8 @@ function onClick(e) {
     case 'flip-card': review.flipped = true; render(); break;
     case 'rate': doRate(target.dataset.rating); break;
     case 'end-review': review.active = false; refresh(); break;
+    case 'fetch-daily-shloka': if (!dailyShlokaLoading) { fetchDailyShloka().then(() => render()); } break;
+    case 'clear-daily-shloka': state.dailyShloka = { date: null, text: '', author: '', source: '' }; commitToDevice(); dailyShlokaError = ''; render(); break;
 
     case 'add-deck': onAddDeck(); break;
     case 'delete-deck': onDeleteDeck(target.dataset.deck); break;

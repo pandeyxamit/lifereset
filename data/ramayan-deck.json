@@ -54,6 +54,22 @@
 
     { "front": "Recite the first shloka of the Ramayan (Ma Nishada).", "back": "मा निषाद प्रतिष्ठां त्वमगमः शाश्वतीः समाः। यत्क्रौञ्चमिथुनादेकमवधीः काममोहितम्॥ — 'O hunter, may you never find peace, for you killed one of a pair of birds lost in love.'", "tag": "shloka" },
     { "front": "What does the name 'Rama' signify?", "back": "'One who delights' / the one in whom all beings rejoice (from the root ram, to delight).", "tag": "shloka" },
-    { "front": "Complete: 'Rama Rama Rameti...'", "back": "रामे रामे रमे रामे, मनोरमे सहस्रनाम तत्तुल्यं राम नाम वरानने — chanting 'Rama' thrice equals the thousand names of Vishnu.", "tag": "shloka" }
+    { "front": "Complete: 'Rama Rama Rameti...'", "back": "रामे रामे रमे रामे, मनोरमे सहस्रनाम तत्तुल्यं राम नाम वरानने — chanting 'Rama' thrice equals the thousand names of Vishnu.", "tag": "shloka" },
+    { "front": "What is the name of the place where Sita is held captive in Lanka?", "back": "The Ashoka grove, where Sita waits under the trees while Ravana tries to win her.", "tag": "sundara" },
+    { "front": "Which god does Rama represent as an avatar?", "back": "Vishnu; Rama is the seventh avatar of Vishnu, the protector of dharma.", "tag": "characters" },
+    { "front": "Who encourages Hanuman to remember his strength before the leap to Lanka?", "back": "Jambavan, the wise bear-king, reminds him of his divine powers.", "tag": "kishkindha" },
+    { "front": "What special power does the Sanjeevani herb have?", "back": "It can restore life and heal fatal wounds when applied in time.", "tag": "yuddha" },
+    { "front": "Who kills Kumbhakarna during the war?", "back": "Lakshmana strikes him down in battle after an epic clash.", "tag": "yuddha" },
+    { "front": "What was Ravana's motive for abducting Sita?", "back": "He wanted to avenge Surpanakha and claim the incomparable princess for his own.", "tag": "aranya" },
+    { "front": "What is Rama called because he always follows dharma?", "back": "Maryada Purushottama, the perfect man who upholds righteous conduct.", "tag": "characters" },
+    { "front": "Why does Bharata refuse to sit on the throne in Ayodhya?", "back": "Because Rama is the rightful king; Bharata places Rama's sandals on the throne instead.", "tag": "ayodhya" },
+    { "front": "Who is the vanara architect credited with building Rama Setu?", "back": "Nala, who along with the vanara workforce built the bridge to Lanka.", "tag": "yuddha" },
+    { "front": "What is the meaning of 'Ashoka' in the context of Sita's place?", "back": "It means 'without sorrow' and refers to the pleasurable grove where Sita was held.", "tag": "sundara" },
+    { "front": "What virtue does Vibhishana symbolize when he joins Rama?", "back": "Righteousness and surrender to dharma over family loyalty.", "tag": "characters" },
+    { "front": "Which warrior fights on the side of Ravana and is known for his pride?", "back": "Kumbhakarna, Ravana's giant brother, famed for his appetite and strength.", "tag": "yuddha" },
+    { "front": "How does Rama show mercy after the war?", "back": "He spares Vibhishana and crowns him king of Lanka once dharma is restored.", "tag": "yuddha" },
+    { "front": "Who narrates the epic to the sage Valmiki?", "back": "It is traditionally believed that Sage Narada and others described Rama's story, which Valmiki then composed.", "tag": "structure" },
+    { "front": "What is the meaning of 'Maryada Purushottama'?", "back": "It means 'the supreme man of conduct', portraying Rama as the ideal person.", "tag": "characters" },
+    { "front": "Which episode shows Lakshmana's devotion to Rama?", "back": "He refuses to cross the line protecting Sita, remaining devoted and protective throughout exile.", "tag": "aranya" }
   ]
 }
