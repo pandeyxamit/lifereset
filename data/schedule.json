@@ -1,0 +1,22 @@
+{
+  "app": "66 Day Life Reset",
+  "startDate": "2026-06-17",
+  "totalDays": 66,
+  "bookTotalPages": 2304,
+  "note": "Static config read by both the web app and the optional Scriptable lock-screen widget. The widget computes each day's targets from these formulas so it never needs a backend.",
+  "formulas": {
+    "runTotalSeconds": "1800 + (day - 1) * 30",
+    "reps": "10 + floor((day - 1) * 0.5)",
+    "plankSeconds": "20 + (day - 1)",
+    "pagesPerDay": "ceil(bookTotalPages / totalDays)",
+    "waterMl": 3000
+  },
+  "quests": [
+    { "name": "Endurance Run / Power Walk", "category": "physical" },
+    { "name": "Bodyweight Stamina Circuit", "category": "physical" },
+    { "name": "Strategic Hydration Target", "category": "physical" },
+    { "name": "Valmiki Ramayan Deep Study", "category": "mental" },
+    { "name": "Silent Mental Awareness Walk", "category": "mental" },
+    { "name": "Digital Sunset Recovery", "category": "mental" }
+  ]
+}

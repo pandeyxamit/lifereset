@@ -1,0 +1,59 @@
+{
+  "deck": { "name": "Valmiki Ramayan" },
+  "cards": [
+    { "front": "How many Kandas (books) are in the Valmiki Ramayan?", "back": "Seven: Bala, Ayodhya, Aranya, Kishkindha, Sundara, Yuddha, and Uttara Kanda.", "tag": "structure" },
+    { "front": "Who is the author of the Ramayan, and what is his title?", "back": "Sage Valmiki, revered as the Adi Kavi (the first poet); the Ramayan is the Adi Kavya.", "tag": "structure" },
+    { "front": "Roughly how many shlokas does the Valmiki Ramayan contain?", "back": "About 24,000 shlokas.", "tag": "structure" },
+    { "front": "What event inspired Valmiki's very first shloka?", "back": "Seeing a hunter kill one of a pair of krauncha (curlew) birds; his grief became the verse 'Ma Nishada'.", "tag": "structure" },
+
+    { "front": "Who is Rama's father?", "back": "King Dasharatha of Ayodhya.", "tag": "characters" },
+    { "front": "Who is Rama's mother?", "back": "Queen Kausalya.", "tag": "characters" },
+    { "front": "Name Dasharatha's three queens.", "back": "Kausalya, Kaikeyi, and Sumitra.", "tag": "characters" },
+    { "front": "Who is Bharata's mother?", "back": "Queen Kaikeyi.", "tag": "characters" },
+    { "front": "Who is the mother of Lakshmana and Shatrughna?", "back": "Queen Sumitra.", "tag": "characters" },
+    { "front": "Who is Sita's father, and which kingdom does he rule?", "back": "King Janaka of Mithila (Videha); Sita is also called Janaki and Vaidehi.", "tag": "characters" },
+    { "front": "Who are Hanuman's divine father and mother?", "back": "Vayu (the wind god) is his spiritual father; his mother is Anjana.", "tag": "characters" },
+    { "front": "Who is Sugriva's estranged brother?", "back": "Vali (Bali), king of Kishkindha.", "tag": "characters" },
+    { "front": "Name Ravana's two famous brothers.", "back": "Kumbhakarna (the great sleeper) and Vibhishana (the righteous one who joins Rama).", "tag": "characters" },
+    { "front": "Who is Ravana's mighty son, master of illusions?", "back": "Indrajit, also called Meghnad.", "tag": "characters" },
+    { "front": "Who is Ravana's chief queen?", "back": "Mandodari.", "tag": "characters" },
+    { "front": "Why is Ravana called Dashanana?", "back": "Because he has ten heads (dasha = ten, anana = face).", "tag": "characters" },
+    { "front": "Which vulture king fights Ravana to save Sita?", "back": "Jatayu; his brother is Sampati.", "tag": "characters" },
+    { "front": "Who is Vali's wife, and Angada's mother?", "back": "Tara, renowned for her wisdom.", "tag": "characters" },
+
+    { "front": "Which sage takes the young Rama and Lakshmana to protect his sacrifice?", "back": "Sage Vishwamitra.", "tag": "bala" },
+    { "front": "Which demoness does Rama slay as a boy at Vishwamitra's request?", "back": "Tataka.", "tag": "bala" },
+    { "front": "Whom does Rama liberate from a curse by the touch of his feet?", "back": "Ahalya, wife of sage Gautama, who had been turned to stone.", "tag": "bala" },
+    { "front": "How does Rama win Sita's hand at the swayamvara?", "back": "By lifting and breaking the divine bow of Shiva (Pinaka) in Janaka's court.", "tag": "bala" },
+
+    { "front": "How long is Rama's exile, and why?", "back": "Fourteen years in the forest, to honour Dasharatha's boon to Kaikeyi.", "tag": "ayodhya" },
+    { "front": "What two boons does Kaikeyi demand?", "back": "That Bharata be crowned king, and that Rama be exiled to the forest for fourteen years.", "tag": "ayodhya" },
+    { "front": "What does Bharata place on the throne in Rama's absence?", "back": "Rama's sandals (paduka), ruling as his regent from Nandigrama.", "tag": "ayodhya" },
+    { "front": "Which Nishada (boatman) chief is Rama's devoted friend on the journey?", "back": "Guha, king of the Nishadas.", "tag": "ayodhya" },
+
+    { "front": "Which demoness is disfigured for her advances, sparking the war?", "back": "Surpanakha, Ravana's sister; Lakshmana cuts off her nose and ears.", "tag": "aranya" },
+    { "front": "Who takes the form of the golden deer to lure Rama away?", "back": "The demon Mareecha.", "tag": "aranya" },
+    { "front": "What is the 'Lakshmana Rekha'?", "back": "The protective line Lakshmana draws around Sita before leaving; she crosses it and is abducted.", "tag": "aranya" },
+    { "front": "Which elderly devotee offers Rama tasted berries with pure love?", "back": "Shabari.", "tag": "aranya" },
+
+    { "front": "How does Rama help Sugriva regain his kingdom?", "back": "By slaying Vali, restoring Sugriva to the throne of Kishkindha.", "tag": "kishkindha" },
+    { "front": "Which dejected vanara does Hanuman inspire to leap the ocean?", "back": "Hanuman himself leaps, encouraged by Jambavan who reminds him of his powers.", "tag": "kishkindha" },
+
+    { "front": "What is the Sundara Kanda chiefly about?", "back": "Hanuman's leap to Lanka, finding Sita in the Ashoka grove, and burning Lanka.", "tag": "sundara" },
+    { "front": "What token does Rama give Hanuman to prove his identity to Sita?", "back": "Rama's signet ring (anguliya); Sita sends back her chudamani (crest jewel).", "tag": "sundara" },
+    { "front": "How does Hanuman set Lanka ablaze?", "back": "Ravana sets fire to Hanuman's tail; Hanuman uses it to burn the city.", "tag": "sundara" },
+
+    { "front": "Who builds the bridge (Setu) to Lanka, and with whose help?", "back": "The vanara architect Nala, with the army of monkeys; it is called Rama Setu.", "tag": "yuddha" },
+    { "front": "Which herb does Hanuman fetch to revive Lakshmana?", "back": "The Sanjeevani herb; unable to identify it, he carries the whole Dronagiri mountain.", "tag": "yuddha" },
+    { "front": "Who reveals the secret of Ravana's death to Rama?", "back": "Vibhishana, Ravana's righteous brother who defected to Rama.", "tag": "yuddha" },
+    { "front": "How is Ravana finally slain?", "back": "By Rama's Brahmastra arrow piercing the nectar in his navel.", "tag": "yuddha" },
+    { "front": "What trial does Sita undergo after the war?", "back": "The Agni Pariksha (trial by fire) to prove her purity.", "tag": "yuddha" },
+
+    { "front": "What festival celebrates Rama's return to Ayodhya?", "back": "Diwali, marking his homecoming and coronation after fourteen years.", "tag": "uttara" },
+    { "front": "Who are Lava and Kusha?", "back": "The twin sons of Rama and Sita, raised in Valmiki's hermitage, who recite the Ramayan.", "tag": "uttara" },
+
+    { "front": "Recite the first shloka of the Ramayan (Ma Nishada).", "back": "मा निषाद प्रतिष्ठां त्वमगमः शाश्वतीः समाः। यत्क्रौञ्चमिथुनादेकमवधीः काममोहितम्॥ — 'O hunter, may you never find peace, for you killed one of a pair of birds lost in love.'", "tag": "shloka" },
+    { "front": "What does the name 'Rama' signify?", "back": "'One who delights' / the one in whom all beings rejoice (from the root ram, to delight).", "tag": "shloka" },
+    { "front": "Complete: 'Rama Rama Rameti...'", "back": "रामे रामे रमे रामे, मनोरमे सहस्रनाम तत्तुल्यं राम नाम वरानने — chanting 'Rama' thrice equals the thousand names of Vishnu.", "tag": "shloka" }
+  ]
+}

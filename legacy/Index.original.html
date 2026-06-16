@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>66 Day Life Reset</title>
+    
+    <!-- iOS Web App Configurations -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Life Reset">
+    
+    <style>
+        :root {
+            --bg: #070a12;
+            --card: #111827;
+            --physical: #3b82f6;
+            --physical-glow: rgba(59, 130, 246, 0.2);
+            --mental: #a855f7;
+            --mental-glow: rgba(168, 85, 247, 0.2);
+            --text: #f8fafc;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 24px 16px;
+            padding-top: calc(env(safe-area-inset-top) + 20px);
+            padding-bottom: calc(env(safe-area-inset-bottom) + 30px);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Status Banner */
+        .streak-counter {
+            background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border: 1px solid rgba(168, 85, 247, 0.1);
+            margin-bottom: 24px;
+        }
+
+        /* RPG Split Level Dashboards */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .rpg-card {
+            background: linear-gradient(135deg, var(--card) 0%, #1f2937 100%);
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #fff;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        .badge.phys { background: var(--physical); box-shadow: 0 0 12px var(--physical-glow); }
+        .badge.ment { background: var(--mental); box-shadow: 0 0 12px var(--mental-glow); }
+
+        .bar-bg {
+            background: #111827;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 6px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+            border-radius: 10px;
+        }
+        .bar-fill.phys { background: var(--physical); }
+        .bar-fill.ment { background: var(--mental); }
+
+        .xp-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        /* Section Typography */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 24px 0 12px 4px;
+            letter-spacing: -0.3px;
+        }
+
+        /* Quest Tracking Row Blocks */
+        .quest-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quest-item {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.01);
+            transition: all 0.2s ease;
+        }
+
+        .quest-info h4 { margin: 0; font-size: 1rem; font-weight: 600; }
+        .quest-info p { margin: 4px 0 0 0; font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
+
+        .type-indicator {
+            display: inline-block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 6px;
+        }
+        .type-indicator.p-tag { background: rgba(59, 130, 246, 0.1); color: #60a5fa; }
+        .type-indicator.m-tag { background: rgba(168, 85, 247, 0.1); color: #c084fc; }
+
+        .check-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #1f2937;
+            background: transparent;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* State Modifiers */
+        .quest-item.done { background: rgba(17, 24, 39, 0.4); opacity: 0.6; }
+        .quest-item.done h4 { text-decoration: line-through; color: var(--text-muted); }
+        .quest-item.done .check-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Setup Element */
+        .book-config {
+            background: #1e1b4b;
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .book-config button {
+            background: var(--mental);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* 66-Day Grid Horizon Matrix */
+        .grid-66 {
+            display: grid;
+            grid-template-columns: repeat(11, 1fr);
+            gap: 5px;
+            background: var(--card);
+            padding: 12px;
+            border-radius: 16px;
+        }
+
+        .block {
+            aspect-ratio: 1;
+            background: #1f2937;
+            border-radius: 5px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .block.won {
+            background: linear-gradient(135deg, var(--physical) 0%, var(--mental) 100%);
+            color: white;
+            box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+        }
+
+        .block.missed {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px dashed var(--danger);
+            color: var(--danger);
+        }
+
+        .block.current-target {
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.95); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="streak-counter" id="streak-banner">Initializing System...</div>
+
+    <div class="dashboard-container">
+        <div class="rpg-card">
+            <span class="badge phys" id="p-lvl">LVL 1</span>
+            <div class="xp-label"><span>PHYSICAL XP</span><span id="p-xp-txt">0/100</span></div>
+            <div class="bar-bg"><div class="bar-fill phys" id="p-bar"></div></div>
+        </div>
+
+        <div class="rpg-card">
+            <span class="badge ment" id="m-lvl">LVL 1</span>
+            <div class="xp-label"><span>MENTAL XP</span><span id="m-xp-txt">0/100</span></div>
+            <div class="bar-bg"><div class="bar-fill ment" id="m-bar"></div></div>
+        </div>
+    </div>
+
+    <div class="book-config" id="book-banner">
+        <span>📖 Track your Valmiki Ramayan pages</span>
+        <button onclick="setBookPages()">Setup</button>
+    </div>
+
+    <div class="section-title" id="quest-header">Today's Strategy Quests</div>
+    <div class="quest-box" id="quests-target"></div>
+
+    <div class="section-title">66-Day Transformation Map</div>
+    <div class="grid-66" id="grid-target"></div>
+
+    <script>
+        // CRITICAL TIME-LOCK: Tracking officially starts June 17, 2026
+        const START_DATE_MS = new Date("2026-06-17T00:00:00").getTime();
+
+        let state = JSON.parse(localStorage.getItem('LifeResetHardCore_Data')) || {
+            p_xp: 0, p_lvl: 1,
+            m_xp: 0, m_lvl: 1,
+            streak: 0,
+            bookTotalPages: 0,
+            daysRecord: {}, 
+            lastCheckedDayNumber: 0,
+            quests: [
+                { id: 1, name: "Endurance Run / Power Walk", desc: "", category: "physical", val: 20, done: false },
+                { id: 2, name: "Bodyweight Stamina Circuit", desc: "", category: "physical", val: 20, done: false },
+                { id: 3, name: "Strategic Hydration Target", desc: "Consume exactly 3.0 Liters of pure water before your wind-down.", category: "physical", val: 15, done: false },
+                { id: 4, name: "Valmiki Ramayan Deep Study", desc: "Read your target page allocation.", category: "mental", val: 35, done: false },
+                { id: 5, name: "Silent Mental Awareness Walk", desc: "15 mins walking outdoors without tech or distractions.", category: "mental", val: 15, done: false },
+                { id: 6, name: "Digital Sunset Recovery", desc: "No phone, laptop, or blue-light screens 45 minutes before sleeping.", category: "mental", val: 15, done: false }
+            ]
+        };
+
+        function commitToDevice() {
+            localStorage.setItem('LifeResetHardCore_Data', JSON.stringify(state));
+        }
+
+        window.setBookPages = function() {
+            const pages = parseInt(prompt("Enter total pages in your Valmiki Ramayan edition:", "2304"));
+            if(pages > 0) {
+                state.bookTotalPages = pages;
+                commitToDevice();
+                updateDynamicQuests();
+                renderUI();
+            }
+        }
+
+        function calculateCurrentDayNumber() {
+            const todayMs = new Date().getTime();
+            if (todayMs < START_DATE_MS) return 0; 
+            const differenceMs = todayMs - START_DATE_MS;
+            return Math.floor(differenceMs / (1000 * 60 * 60 * 24)) + 1; 
+        }
+
+        function updateDynamicQuests() {
+            const currentDay = calculateCurrentDayNumber();
+            const dayFactor = currentDay > 0 ? currentDay : 1;
+
+            // 1. Endurance Run: +30 seconds daily progressive overload
+            const baseMinutes = 30;
+            const extraSeconds = (dayFactor - 1) * 30;
+            const totalMinutes = baseMinutes + Math.floor(extraSeconds / 60);
+            const totalSeconds = extraSeconds % 60;
+            const timeString = totalSeconds > 0 ? `${totalMinutes}m ${totalSeconds}s` : `${totalMinutes} mins`;
+            state.quests[0].desc = `Run or Power Walk for minimum ${timeString}. Focus on steady deep stamina breathing.`;
+
+            // 2. Bodyweight Circuit Overload
+            const repProgress = 10 + Math.floor((dayFactor - 1) * 0.5);
+            const plankProgress = 20 + (dayFactor - 1);
+            state.quests[1].desc = `3 sets: Pushups (${repProgress} reps), Squats (${repProgress} reps), Planks (${plankProgress}s) & Lunges to structural failure.`;
+
+            // 3. Dynamic tip for Hydration Target
+            state.quests[2].desc = `Consume 3.0 Liters of pure water. Tip: Finish 1.5L before noon to avoid disrupting sleep layout.`;
+
+            // 4. Fixed Mental Target Setup
+            if (state.bookTotalPages > 0) {
+                const targets = Math.ceil(state.bookTotalPages / 66);
+                state.quests[3].desc = `Read exactly ${targets} pages today to fulfill your Gita Press narrative roadmap.`;
+            }
+        }
+
+        function runChronologicalEngine() {
+            const currentDay = calculateCurrentDayNumber();
+            
+            if (currentDay === 0) return; 
+
+            for (let i = 1; i < currentDay; i++) {
+                if (!state.daysRecord[i]) {
+                    state.daysRecord[i] = "missed";
+                    state.streak = 0; 
+                }
+            }
+
+            if (currentDay > state.lastCheckedDayNumber) {
+                if (state.lastCheckedDayNumber > 0 && state.daysRecord[state.lastCheckedDayNumber] !== "won") {
+                    state.daysRecord[state.lastCheckedDayNumber] = "missed";
+                    state.streak = 0;
+                }
+                
+                // Passive Duration Cycle XP: +20 XP automatically distributed daily to reward chronological persistence
+                const daysPassed = state.lastCheckedDayNumber === 0 ? 1 : (currentDay - state.lastCheckedDayNumber);
+                state.p_xp += (daysPassed * 20);
+                while (state.p_xp >= 100) {
+                    state.p_lvl++;
+                    state.p_xp -= 100;
+                }
+                
+                state.quests.forEach(q => q.done = false);
+                state.lastCheckedDayNumber = currentDay;
+                commitToDevice();
+            }
+        }
+
+        function renderUI() {
+            const currentDay = calculateCurrentDayNumber();
+            updateDynamicQuests();
+            
+            if (currentDay === 0) {
+                document.getElementById('streak-banner').innerHTML = `⏱️ LOCK-IN STARTS TOMORROW (17th June 2026)`;
+                document.getElementById('quest-header').innerText = "Strategy Quests (Preview Mode)";
+            } else if (currentDay > 66) {
+                document.getElementById('streak-banner').innerHTML = `🏁 66-Day Horizon Matrix Terminated. Check your results!`;
+            } else {
+                document.getElementById('streak-banner').innerHTML = `Day ${currentDay} of 66 — ${state.streak} Day Hot Streak 🔥`;
+                document.getElementById('quest-header').innerText = `Today's Strategy Quests (Day ${currentDay})`;
+            }
+
+            document.getElementById('p-lvl').innerText = `STAMINA LVL ${state.p_lvl}`;
+            document.getElementById('p-xp-txt').innerText = `${state.p_xp}/100`;
+            document.getElementById('p-bar').style.width = `${state.p_xp}%`;
+
+            document.getElementById('m-lvl').innerText = `WISDOM LVL ${state.m_lvl}`;
+            document.getElementById('m-xp-txt').innerText = `${state.m_xp}/100`;
+            document.getElementById('m-bar').style.width = `${state.m_xp}%`;
+
+            if (state.bookTotalPages > 0) {
+                const targets = Math.ceil(state.bookTotalPages / 66);
+                document.getElementById('book-banner').innerHTML = `<span>📖 Allocation: <b>${targets} Pages/Day</b> to clear book.</span><button onclick='setBookPages()'>Edit</button>`;
+            }
+
+            const targetDeck = document.getElementById('quests-target');
+            targetDeck.innerHTML = '';
+            
+            state.quests.forEach(quest => {
+                const node = document.createElement('div');
+                node.className = `quest-item ${quest.done ? 'done' : ''}`;
+                const clickAction = (currentDay === 0) ? `alert('Locked until tomorrow!')` : `toggleQuest(${quest.id})`;
+                node.innerHTML = `
+                    <div class="quest-info">
+                        <h4>${quest.name}</h4>
+                        <p>${quest.desc}</p>
+                        <span class="type-indicator ${quest.category === 'physical' ? 'p-tag' : 'm-tag'}">${quest.category} (+${quest.val} XP)</span>
+                    </div>
+                    <button class="check-circle" onclick="${clickAction}">✓</button>
+                `;
+                targetDeck.appendChild(node);
+            });
+
+            const mapContainer = document.getElementById('grid-target');
+            mapContainer.innerHTML = '';
+            for(let i = 1; i <= 66; i++) {
+                const block = document.createElement('div');
+                let statusClass = '';
+                
+                if (state.daysRecord[i] === 'won') statusClass = 'won';
+                else if (state.daysRecord[i] === 'missed') statusClass = 'missed';
+                else if (i === currentDay && currentDay > 0) statusClass = 'current-target';
+
+                block.className = `block ${statusClass}`;
+                block.innerText = i;
+                mapContainer.appendChild(block);
+            }
+        }
+
+        window.toggleQuest = function(id) {
+            const currentDay = calculateCurrentDayNumber();
+            if (currentDay === 0 || currentDay > 66) return;
+
+            updateDynamicQuests();
+            const target = state.quests.find(q => q.id === id);
+            if(!target) return;
+
+            if(!target.done) {
+                target.done = true;
+                if(target.category === 'physical') {
+                    state.p_xp += target.val;
+                    if(state.p_xp >= 100) { state.p_lvl++; state.p_xp -= 100; }
+                } else {
+                    state.m_xp += target.val;
+                    if(state.m_xp >= 100) { state.m_lvl++; state.m_xp -= 100; }
+                }
+            } else {
+                target.done = false;
+                if(target.category === 'physical') {
+                    state.p_xp = Math.max(0, state.p_xp - target.val);
+                } else {
+                    state.m_xp = Math.max(0, state.m_xp - target.val);
+                }
+            }
+
+            const perfectDay = state.quests.every(q => q.done);
+            if (perfectDay) {
+                if (state.daysRecord[currentDay] !== "won") {
+                    state.daysRecord[currentDay] = "won";
+                    state.streak++;
+                }
+            } else {
+                if (state.daysRecord[currentDay] === "won") {
+                    delete state.daysRecord[currentDay];
+                    state.streak = Math.max(0, state.streak - 1);
+                }
+            }
+
+            commitToDevice();
+            renderUI();
+        }
+
+        runChronologicalEngine();
+        renderUI();
+    </script>
+</body>
+</html>
