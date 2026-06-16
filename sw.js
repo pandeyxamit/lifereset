@@ -1,5 +1,5 @@
 /* sw.js — offline-first service worker for the 66 Day Life Reset PWA. */
-const CACHE = 'life-reset-v1';
+const CACHE = 'life-reset-v2';
 const CORE = [
   '.',
   'index.html',
