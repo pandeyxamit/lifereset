@@ -1,0 +1,11 @@
+{
+  "name": "life-reset-66",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "66 Day Life Reset — offline-first PWA habit tracker with flashcards.",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "icons": "python3 tools/gen-icons.py"
+  }
+}
