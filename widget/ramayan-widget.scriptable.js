@@ -14,6 +14,7 @@
 // NOTE: the widget shows daily *targets* only. Your live check-marks, XP and
 // streak live inside the PWA's private storage and can't be read here.
 
+const WIDGET_VERSION = 2;
 const HOST = "https://pandeyxamit.github.io/lifereset"; //
 const FALLBACK = {
   startDate: "2026-06-17",
@@ -87,11 +88,18 @@ function buildWidget(cfg) {
     return w;
   }
 
+  const family = typeof config.widgetFamily !== 'undefined' ? config.widgetFamily : 'medium';
+  const isCompact = family === 'small' || family === 'accessory';
+  const titleSize = family === 'small' ? 13 : 15;
+  const rowSize = family === 'small' ? 10 : 11;
+  const spacing = family === 'small' ? 4 : 6;
+
+  w.setPadding(10, 12, 10, 12);
   const t = targetsFor(day, cfg);
   const header = w.addText(`DAY ${day} / ${total}`);
-  header.font = Font.heavySystemFont(15);
+  header.font = Font.heavySystemFont(titleSize);
   header.textColor = Color.white();
-  w.addSpacer(8);
+  w.addSpacer(spacing);
 
   const rows = [
     [`🏃 ${t.run}`, PHYS],
@@ -105,17 +113,26 @@ function buildWidget(cfg) {
   const stack = w.addStack();
   stack.layoutVertically();
   stack.setPadding(0, 0, 0, 0);
+  stack.spacing = spacing;
 
   for (const [text, color] of rows) {
     const row = stack.addStack();
     row.layoutHorizontally();
     row.setPadding(0, 0, 0, 0);
     const r = row.addText(text);
-    r.font = Font.systemFont(11);
+    r.font = Font.systemFont(rowSize);
     r.textColor = color;
     r.lineLimit = 1;
-    r.minimumScaleFactor = 0.7;
+    r.minimumScaleFactor = 0.6;
     row.addSpacer();
+  }
+
+  if (!isCompact) {
+    w.addSpacer(6);
+    const versionLabel = w.addText(`v${WIDGET_VERSION}`);
+    versionLabel.font = Font.systemFont(8);
+    versionLabel.textColor = Color.gray();
+    versionLabel.leftAlignText();
   }
   return w;
 }
