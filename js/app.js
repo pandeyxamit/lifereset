@@ -22,6 +22,7 @@ import {
 import { nudgeText, buildICS } from './reminders.js';
 
 let activeTab = 'today';
+let lastActiveTab = activeTab;
 let runSW = null;
 let plankCD = null;
 let review = { active: false, cards: [], i: 0, flipped: false };
@@ -50,8 +51,8 @@ async function fetchDailyShloka() {
     // Prioritized endpoints to try (name, url). The URLs include common quote APIs
     // and candidate Bhagavad Gita API endpoints per user references.
     const endpoints = [
-      { name: 'Shloka.vercel (preferred)', url: 'https://shloka.vercel.app/api/random' },
-      { name: 'Shloka.vercel (alt)', url: 'https://shloka.vercel.app/api/shloka/random' },
+      { name: 'Shloka.onrender (gita random)', url: 'https://shloka.onrender.com/api/v1/bahgavad_gita/random' },
+      { name: 'Shloka.onrender (chanakya random)', url: 'https://shloka.onrender.com/api/v1/chanakya/shloka/random' },
       { name: 'ZenQuotes', url: 'https://zenquotes.io/api/random' },
       { name: 'Quotable', url: 'https://api.quotable.io/random' },
       { name: 'BhagavadGita-Vercel', url: 'https://bhagavad-gita-api.vercel.app/api/verses/random' },
@@ -70,10 +71,29 @@ async function fetchDailyShloka() {
         clearTimeout(to);
         if (!res.ok) { console.warn(`${ep.name} HTTP ${res.status}`); continue; }
         const data = await res.json();
-        // Heuristic extraction of text/author from various APIs
+        // Heuristic extraction: handle various API shapes (arrays, objects with mixed key names)
         const maybe = Array.isArray(data) ? data[0] : data;
-        quote = maybe?.q || maybe?.text || maybe?.content || maybe?.shloka || maybe?.verse || maybe?.english || '';
-        author = maybe?.a || maybe?.author || maybe?.source || maybe?.translator || author;
+        let candidate = '';
+        let candidateAuthor = author;
+        if (maybe && typeof maybe === 'object') {
+          // Prefer explicit fields (case-insensitive)
+          for (const k of Object.keys(maybe)) {
+            const v = maybe[k];
+            if (typeof v !== 'string') continue;
+            const key = k.toLowerCase().replace(/\s+/g, '');
+            if (!candidate && /(shloka|sloka|verse|text|quote|content|englishtranslation|english)/.test(key)) candidate = v;
+            if (!candidateAuthor && /(author|a|translator|class|source|chapter)/.test(key)) candidateAuthor = v;
+          }
+          // Fallback: first string-valued property
+          if (!candidate) {
+            const firstStr = Object.values(maybe).find((x) => typeof x === 'string');
+            if (firstStr) candidate = firstStr;
+          }
+        } else if (typeof maybe === 'string') {
+          candidate = maybe;
+        }
+        quote = candidate || '';
+        author = candidateAuthor || author;
         if (quote) { used = ep.name; console.info(`fetchDailyShloka: got data from ${ep.name}`); break; }
       } catch (err) {
         console.warn(`fetchDailyShloka ${ep.name} failed:`, err && err.message ? err.message : err);
@@ -197,7 +217,11 @@ function render() {
   document.querySelectorAll('.nav-btn').forEach((b) => {
     b.classList.toggle('active', b.dataset.tab === activeTab);
   });
-  window.scrollTo(0, 0);
+  // Only scroll to top when user navigates between tabs — avoid jumping on small UI updates.
+  if (activeTab !== lastActiveTab) {
+    window.scrollTo(0, 0);
+    lastActiveTab = activeTab;
+  }
 }
 
 // ---- Today screen -----------------------------------------------------------
