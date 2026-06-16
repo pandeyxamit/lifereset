@@ -3,7 +3,7 @@ import {
   state, loadState, commitToDevice, exportData, importData, resetData
 } from './state.js';
 import {
-  calculateCurrentDayNumber, TOTAL_DAYS, $, el, setText
+  calculateCurrentDayNumber, TOTAL_DAYS, todayKey, $, el, setText
 } from './util.js';
 import {
   updateDynamicQuests, runChronologicalEngine, toggleQuest,

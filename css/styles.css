@@ -13,23 +13,31 @@
   --nav-h: 64px;
 }
 
-html { height: 100%; }
+html {
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+}
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
-  min-height: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg);
   color: var(--text);
   margin: 0;
   padding: 24px 16px;
   padding-top: calc(env(safe-area-inset-top, constant(safe-area-inset-top, 0px)) + 20px);
-  padding-bottom: calc(env(safe-area-inset-bottom, constant(safe-area-inset-bottom, 0px)) + var(--nav-h) + 24px);
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, constant(safe-area-inset-bottom, 0px)) + 20px);
   user-select: none;
   -webkit-user-select: none;
 }
 
-#screen { max-width: 560px; margin: 0 auto; }
+#screen {
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: calc(100vh - calc(var(--nav-h) + env(safe-area-inset-bottom, constant(safe-area-inset-bottom, 0px))));
+}
 
 /* Status banner */
 .streak-counter {
@@ -182,20 +190,20 @@ body {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: env(safe-area-inset-bottom, 0px);
+  bottom: 0;
   z-index: 50;
   display: flex;
   justify-content: space-around;
-  align-items: flex-end;
-  background: rgba(7,10,18,0.92);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255,255,255,0.06);
-  min-height: var(--nav-h);
-  padding: 12px 0 10px;
-  box-sizing: border-box;
+  align-items: center;
+  background: rgba(7,10,18,0.96);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.08);
   width: 100%;
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
 }
-.nav-btn { background: none; border: none; color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1 1 0; min-width: 0; padding: 8px 0; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.nav-btn { background: none; border: none; color: var(--text-muted); font-size: 0.65rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; flex: 1 1 0; min-width: 0; padding: 10px 0 4px; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 .nav-btn:focus { outline: none; }
 .nav-btn:active { transform: none; }
 .nav-btn .ico { font-size: 1.25rem; line-height: 1; }
