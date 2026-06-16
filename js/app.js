@@ -1,6 +1,7 @@
 // app.js — controller: boot, tab routing, rendering, and event delegation.
 import {
-  state, loadState, commitToDevice, exportData, importData, resetData
+  state, loadState, commitToDevice, exportData, importData, resetData,
+  defaultState, migrate, STORAGE_KEY
 } from './state.js';
 import {
   calculateCurrentDayNumber, TOTAL_DAYS, todayKey, $, el, setText
@@ -182,7 +183,9 @@ function createPullToRefresh() {
     if (pullRefreshState.distance >= PULL_REFRESH_THRESHOLD) {
       indicator.textContent = 'Refreshing…';
       indicator.classList.add('refreshing');
-      refresh();
+      // Perform a robust refresh that clears caches/service-worker and preserves
+      // only essential user data so the app picks up deployed updates.
+      performPullRefreshReset();
       setTimeout(resetIndicator, 600);
     } else {
       resetIndicator();
@@ -201,6 +204,64 @@ function refresh() {
     newly.forEach((a) => toast(`${a.icon} ${a.name} unlocked!`, 'achv'));
   }
   render();
+}
+
+// Clear caches and service workers, preserve essential user data, then reload.
+async function performPullRefreshReset() {
+  try {
+    // Minimal preserved data: settings, flashcards, quests, bookTotalPages, achievements, daysRecord
+    const kept = {
+      settings: state.settings || {},
+      flashcards: state.flashcards || {},
+      quests: state.quests || [],
+      bookTotalPages: state.bookTotalPages || 0,
+      achievements: state.achievements || {},
+      daysRecord: state.daysRecord || {}
+    };
+    // Build new base state and merge kept values
+    const base = defaultState();
+    const newState = {
+      ...base,
+      settings: { ...base.settings, ...kept.settings },
+      flashcards: { ...base.flashcards, ...kept.flashcards },
+      quests: Array.isArray(kept.quests) && kept.quests.length ? kept.quests : base.quests,
+      bookTotalPages: kept.bookTotalPages || base.bookTotalPages,
+      achievements: { ...base.achievements, ...kept.achievements },
+      daysRecord: { ...base.daysRecord, ...kept.daysRecord }
+    };
+    // Migrate to ensure schema consistency, then persist
+    state = migrate(newState);
+    commitToDevice();
+
+    // Clear CacheStorage entries
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    }
+
+    // Unregister service workers so a fresh one can be installed on reload
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+
+    // Remove any other localStorage keys except our primary storage key
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && k !== STORAGE_KEY) localStorage.removeItem(k);
+      }
+    } catch (e) {
+      console.warn('Could not prune localStorage:', e);
+    }
+
+    // Finally, reload to fetch updated assets from network
+    location.reload();
+  } catch (err) {
+    console.error('performPullRefreshReset failed:', err);
+    // Fallback to a soft refresh if something goes wrong
+    refresh();
+  }
 }
 
 function render() {
