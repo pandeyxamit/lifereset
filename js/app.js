@@ -31,6 +31,22 @@ let dailyShlokaLoading = false;
 let dailyShlokaError = '';
 let currentModal = null;
 
+function applyTheme() {
+  const theme = state.settings.theme || 'dark';
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+}
+
+function toggleTheme() {
+  state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
+  applyTheme();
+  commitToDevice();
+  render();
+}
+
 const FALLBACK_SHLOKAS = [
   { text: 'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत। अभ्युत्थानम् अधर्मस्य तदाऽआत्मानं सृजाम्यहम्॥', author: 'Bhagavad Gita 4.7' },
   { text: 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन। मा कर्मफलहेतुर्भूर्मा ते संगोऽस्त्वकर्मणि॥', author: 'Bhagavad Gita 2.47' },
@@ -119,6 +135,7 @@ async function fetchDailyShloka() {
 // ---- Boot -------------------------------------------------------------------
 function boot() {
   loadState();
+  applyTheme();
   runChronologicalEngine();
   rollDailyReview();
   wireEvents();
@@ -632,6 +649,13 @@ function renderSettings() {
   const frag = el('div');
   frag.appendChild(el('div', { class: 'section-title', text: 'Settings' }));
 
+  // Display & Theme
+  frag.appendChild(el('div', { class: 'section-title sub', text: 'Display' }));
+  const displayCard = el('div', { class: 'tool-card' });
+  const currentTheme = state.settings.theme || 'dark';
+  displayCard.appendChild(settingRow('Theme', currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1), 'toggle-theme', '🎨 Switch'));
+  frag.appendChild(displayCard);
+
   // Custom quests
   frag.appendChild(el('div', { class: 'section-title sub', text: 'Quests' }));
   const qbox = el('div', { class: 'quest-box' });
@@ -683,6 +707,7 @@ function renderSettings() {
   return frag;
 }
 
+
 function settingRow(label, value, action, btn) {
   return el('div', { class: 'set-row' }, [
     el('div', {}, [el('div', { text: label }), el('div', { class: 'muted', text: value })]),
@@ -717,6 +742,7 @@ function onClick(e) {
     case 'locked': toast('Locked until 17th June 2026 🔒'); break;
 
     case 'setup-book': setupBook(); break;
+    case 'toggle-theme': toggleTheme(); break;
     case 'set-water-goal': setWaterGoal(); break;
     case 'set-reminder': setReminder(); break;
 

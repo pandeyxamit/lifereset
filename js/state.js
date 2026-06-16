@@ -44,7 +44,7 @@ export function defaultState() {
     timers: { day: 0, waterMl: 0 },
     achievements: {},           // id -> ISO timestamp unlocked
     dailyShloka: { date: null, text: '', author: '', source: '' },
-    settings: { reminderTime: '06:30', waterGoalMl: 3000 }
+    settings: { reminderTime: '06:30', waterGoalMl: 3000, theme: 'dark' }
   };
 }
 
