@@ -71,6 +71,7 @@ function boot() {
   rollDailyReview();
   wireEvents();
   registerServiceWorker();
+  createPullToRefresh();
   render();
   // Seed deck (async, first run only) then refresh if it added cards.
   ensureSeed().then(() => render());
@@ -82,6 +83,62 @@ function registerServiceWorker() {
       navigator.serviceWorker.register('sw.js').catch((e) => console.warn('SW registration failed:', e));
     });
   }
+}
+
+const PULL_REFRESH_THRESHOLD = 70;
+const PULL_REFRESH_MAX = 120;
+let pullRefreshState = { startY: null, distance: 0, active: false };
+
+function createPullToRefresh() {
+  const indicator = el('div', { id: 'pull-refresh', text: 'Pull to refresh' });
+  document.body.appendChild(indicator);
+
+  function resetIndicator() {
+    pullRefreshState = { startY: null, distance: 0, active: false };
+    indicator.style.transform = 'translateY(-100%)';
+    indicator.classList.remove('ready', 'refreshing');
+    indicator.textContent = 'Pull to refresh';
+  }
+
+  function updateIndicator(distance) {
+    indicator.style.transform = `translateY(${Math.min(distance - 100, 0)}px)`;
+    const ready = distance >= PULL_REFRESH_THRESHOLD;
+    indicator.classList.toggle('ready', ready);
+    indicator.textContent = ready ? 'Release to refresh' : 'Pull to refresh';
+  }
+
+  window.addEventListener('touchstart', (event) => {
+    if (window.scrollY !== 0 || pullRefreshState.active) return;
+    pullRefreshState.startY = event.touches[0].clientY;
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (event) => {
+    if (pullRefreshState.startY === null) return;
+    const currentY = event.touches[0].clientY;
+    const distance = Math.max(0, currentY - pullRefreshState.startY);
+    if (distance === 0) return;
+    pullRefreshState.active = true;
+    pullRefreshState.distance = Math.min(distance, PULL_REFRESH_MAX);
+    updateIndicator(pullRefreshState.distance);
+    if (window.scrollY === 0) event.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => {
+    if (!pullRefreshState.active) {
+      pullRefreshState.startY = null;
+      return;
+    }
+    if (pullRefreshState.distance >= PULL_REFRESH_THRESHOLD) {
+      indicator.textContent = 'Refreshing…';
+      indicator.classList.add('refreshing');
+      refresh();
+      setTimeout(resetIndicator, 600);
+    } else {
+      resetIndicator();
+    }
+  });
+
+  resetIndicator();
 }
 
 // ---- Render orchestration ---------------------------------------------------
