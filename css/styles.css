@@ -118,7 +118,8 @@ body {
 
 /* Tool cards (review, hydration, timers, backup) */
 .tool-card { background: var(--card); border-radius: 16px; padding: 16px; margin: 18px 0; border: 1px solid rgba(255,255,255,0.03); }
-.tool-card.daily-shloka-card { margin-top: 28px; }
+.tool-card.daily-flashcard-card,
+.tool-card.daily-shloka-card { margin-top: 30px; }
 .tool-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .tool-head h4 { margin: 0; font-size: 1rem; }
 .pill { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(255,255,255,0.06); color: var(--text-muted); }

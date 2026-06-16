@@ -161,7 +161,7 @@ function renderToday() {
 
   // Daily review summary
   const due = dueCount();
-  const reviewCard = el('div', { class: 'tool-card' });
+  const reviewCard = el('div', { class: 'tool-card daily-flashcard-card' });
   reviewCard.appendChild(el('div', { class: 'tool-head' }, [
     el('h4', { text: '📚 Daily Flashcards' }),
     el('span', { class: 'pill', text: due > 0 ? `${due} due` : 'all clear' })
