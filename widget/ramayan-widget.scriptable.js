@@ -14,8 +14,7 @@
 // NOTE: the widget shows daily *targets* only. Your live check-marks, XP and
 // streak live inside the PWA's private storage and can't be read here.
 
-const HOST = "https://lifereset.tiiny.site"; // your tiiny.site URL (no trailing slash)
-
+const HOST = "https://pandeyxamit.github.io/lifereset"; //
 const FALLBACK = {
   startDate: "2026-06-17",
   totalDays: 66,
