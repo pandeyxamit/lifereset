@@ -91,7 +91,7 @@ function buildWidget(cfg) {
   const header = w.addText(`DAY ${day} / ${total}`);
   header.font = Font.heavySystemFont(15);
   header.textColor = Color.white();
-  w.addSpacer(6);
+  w.addSpacer(8);
 
   const rows = [
     [`🏃 ${t.run}`, PHYS],
@@ -101,12 +101,21 @@ function buildWidget(cfg) {
     [`🚶 15 min silent walk`, MENT],
     [`🌙 Digital sunset`, MENT]
   ];
+
+  const stack = w.addStack();
+  stack.layoutVertically();
+  stack.setPadding(0, 0, 0, 0);
+
   for (const [text, color] of rows) {
-    const r = w.addText(text);
+    const row = stack.addStack();
+    row.layoutHorizontally();
+    row.setPadding(0, 0, 0, 0);
+    const r = row.addText(text);
     r.font = Font.systemFont(11);
     r.textColor = color;
     r.lineLimit = 1;
-    w.addSpacer(2);
+    r.minimumScaleFactor = 0.7;
+    row.addSpacer();
   }
   return w;
 }
