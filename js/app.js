@@ -206,56 +206,39 @@ function refresh() {
   render();
 }
 
-// Clear caches and service workers, preserve essential user data, then reload.
+// Clear caches and service workers, preserve all user data, then reload.
 async function performPullRefreshReset() {
   try {
-    // Minimal preserved data: settings, flashcards, quests, bookTotalPages, achievements, daysRecord
-    const kept = {
-      settings: state.settings || {},
-      flashcards: state.flashcards || {},
-      quests: state.quests || [],
-      bookTotalPages: state.bookTotalPages || 0,
-      achievements: state.achievements || {},
-      daysRecord: state.daysRecord || {}
-    };
-    // Build new base state and merge kept values
-    const base = defaultState();
-    const newState = {
-      ...base,
-      settings: { ...base.settings, ...kept.settings },
-      flashcards: { ...base.flashcards, ...kept.flashcards },
-      quests: Array.isArray(kept.quests) && kept.quests.length ? kept.quests : base.quests,
-      bookTotalPages: kept.bookTotalPages || base.bookTotalPages,
-      achievements: { ...base.achievements, ...kept.achievements },
-      daysRecord: { ...base.daysRecord, ...kept.daysRecord }
-    };
-    // Migrate to ensure schema consistency, then persist
-    state = migrate(newState);
+    // Persist current state — DO NOT alter or remove any user data.
     commitToDevice();
 
-    // Clear CacheStorage entries
+    // Clear CacheStorage entries to force network refresh of assets.
     if ('caches' in window) {
       const keys = await caches.keys();
       await Promise.all(keys.map((k) => caches.delete(k)));
     }
 
-    // Unregister service workers so a fresh one can be installed on reload
+    // Try to update/unregister service workers so a fresh one can install on reload.
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map((r) => r.unregister()));
-    }
-
-    // Remove any other localStorage keys except our primary storage key
-    try {
-      for (let i = localStorage.length - 1; i >= 0; i--) {
-        const k = localStorage.key(i);
-        if (k && k !== STORAGE_KEY) localStorage.removeItem(k);
+      for (const r of regs) {
+        try {
+          // Prefer to signal waiting workers to skipWaiting if possible.
+          if (r.waiting) {
+            try { r.waiting.postMessage({ type: 'SKIP_WAITING' }); } catch (e) { /* ignore */ }
+          }
+          // Attempt an update, then unregister to ensure clean install on reload.
+          try { await r.update(); } catch (e) { /* ignore */ }
+          await r.unregister();
+        } catch (e) {
+          console.warn('Service worker registration action failed:', e);
+        }
       }
-    } catch (e) {
-      console.warn('Could not prune localStorage:', e);
     }
 
-    // Finally, reload to fetch updated assets from network
+    // Do NOT remove any localStorage keys — preserve all user data per request.
+
+    // Reload to fetch updated assets and register fresh service worker.
     location.reload();
   } catch (err) {
     console.error('performPullRefreshReset failed:', err);
