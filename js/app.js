@@ -27,6 +27,7 @@ let plankCD = null;
 let review = { active: false, cards: [], i: 0, flipped: false };
 let dailyShlokaLoading = false;
 let dailyShlokaError = '';
+let currentModal = null;
 
 const FALLBACK_SHLOKAS = [
   { text: 'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत। अभ्युत्थानम् अधर्मस्य तदाऽआत्मानं सृजाम्यहम्॥', author: 'Bhagavad Gita 4.7' },
@@ -224,7 +225,7 @@ function renderToday() {
     el('span', { class: 'pill', text: due > 0 ? `${due} due` : 'all clear' })
   ]));
   reviewCard.appendChild(el('button', {
-    class: 'btn btn-mental full', dataset: { action: 'start-review-inline' },
+    class: 'btn btn-mental full', dataset: { action: 'start-review-modal' },
     text: due > 0 ? `Review ${due} card${due === 1 ? '' : 's'}` : 'Browse decks'
   }));
   frag.appendChild(reviewCard);
@@ -460,8 +461,29 @@ function dailyShlokaCard() {
   if (state.dailyShloka.date === today && state.dailyShloka.text) {
     row.appendChild(el('button', { class: 'btn ghost full', dataset: { action: 'clear-daily-shloka' }, text: 'Clear' }));
   }
+  row.appendChild(el('button', { class: 'btn ghost full', dataset: { action: 'open-verse' }, text: 'View Verse' }));
   card.appendChild(row);
   return card;
+}
+
+function openVerseModal() {
+  const today = todayKey();
+  const v = state.dailyShloka || {};
+  const body = el('div');
+  if (v.text) {
+    body.appendChild(el('p', { class: 'muted', text: v.text }));
+    if (v.author) body.appendChild(el('p', { class: 'muted', text: `— ${v.author}` }));
+    if (v.source) body.appendChild(el('p', { class: 'muted', text: `source: ${v.source}` }));
+  } else {
+    body.appendChild(el('p', { class: 'muted', text: 'No verse available yet.' }));
+  }
+  if (currentModal) currentModal.close();
+  currentModal = openModal('Verse of the Day', body, null);
+}
+
+function openReviewModal() {
+  if (currentModal) currentModal.close();
+  currentModal = openModal('Review Cards', renderReviewCard(), null);
 }
 
 function renderStats() {
@@ -585,6 +607,13 @@ function onClick(e) {
     case 'nav': activeTab = target.dataset.tab; render(); break;
     case 'goto-cards': activeTab = 'cards'; render(); break;
     case 'start-review-inline': startReview(); break;
+    case 'start-review-modal':
+      startReview();
+      openReviewModal();
+      break;
+    case 'open-verse':
+      openVerseModal();
+      break;
 
     case 'toggle-quest': toggleQuest(parseInt(target.dataset.id, 10)); refresh(); break;
     case 'locked': toast('Locked until 17th June 2026 🔒'); break;
@@ -606,7 +635,7 @@ function onClick(e) {
     case 'start-review': startReview(); break;
     case 'flip-card': review.flipped = true; render(); break;
     case 'rate': doRate(target.dataset.rating); break;
-    case 'end-review': review.active = false; refresh(); break;
+    case 'end-review': review.active = false; refresh(); if (currentModal) { currentModal.close(); currentModal = null; } break;
     case 'fetch-daily-shloka': if (!dailyShlokaLoading) { fetchDailyShloka().then(() => render()); } break;
     case 'clear-daily-shloka': state.dailyShloka = { date: null, text: '', author: '', source: '' }; commitToDevice(); dailyShlokaError = ''; render(); break;
 
@@ -655,7 +684,13 @@ function doRate(rating) {
   review.flipped = false;
   if (res.sessionCleared) toast(`Session cleared! +${res.bonus} Mental XP 🧠`, 'achv');
   if (review.i >= review.cards.length) { review.active = false; }
+  // Refresh UI and update modal if open
   refresh();
+  if (currentModal) {
+    currentModal.close();
+    if (review.active) currentModal = openModal('Review Cards', renderReviewCard(), null);
+    else currentModal = null;
+  }
 }
 
 function onAddDeck() {
