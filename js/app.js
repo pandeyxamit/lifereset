@@ -224,10 +224,18 @@ function renderToday() {
     el('span', { class: 'pill', text: due > 0 ? `${due} due` : 'all clear' })
   ]));
   reviewCard.appendChild(el('button', {
-    class: 'btn btn-mental full', dataset: { action: 'goto-cards' },
+    class: 'btn btn-mental full', dataset: { action: 'start-review-inline' },
     text: due > 0 ? `Review ${due} card${due === 1 ? '' : 's'}` : 'Browse decks'
   }));
   frag.appendChild(reviewCard);
+
+  // Verse of the day on the homepage
+  frag.appendChild(dailyShlokaCard());
+
+  // If a review session is active, render the inline review UI here (no redirect)
+  if (review.active && review.i < review.cards.length) {
+    frag.appendChild(renderReviewCard());
+  }
 
   // Hydration quick-add
   frag.appendChild(hydrationCard());
@@ -576,6 +584,7 @@ function onClick(e) {
   switch (a) {
     case 'nav': activeTab = target.dataset.tab; render(); break;
     case 'goto-cards': activeTab = 'cards'; render(); break;
+    case 'start-review-inline': startReview(); break;
 
     case 'toggle-quest': toggleQuest(parseInt(target.dataset.id, 10)); refresh(); break;
     case 'locked': toast('Locked until 17th June 2026 🔒'); break;
