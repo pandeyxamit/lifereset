@@ -47,18 +47,46 @@ async function fetchDailyShloka() {
   dailyShlokaLoading = true;
   dailyShlokaError = '';
   try {
-    const res = await fetch('https://zenquotes.io/api/random', { cache: 'no-cache' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const item = Array.isArray(data) ? data[0] : data;
-    const quote = item?.q || item?.text || '';
-    const author = item?.a || item?.author || 'Unknown';
-    if (!quote) throw new Error('No quote data');
-    state.dailyShloka = { date: today, text: quote, author, source: 'ZenQuotes' };
+    // Prioritized endpoints to try (name, url). The URLs include common quote APIs
+    // and candidate Bhagavad Gita API endpoints per user references.
+    const endpoints = [
+      { name: 'ZenQuotes', url: 'https://zenquotes.io/api/random' },
+      { name: 'Quotable', url: 'https://api.quotable.io/random' },
+      { name: 'BhagavadGita-Vercel', url: 'https://bhagavad-gita-api.vercel.app/api/verses/random' },
+      { name: 'BhagavadGita-Example', url: 'https://gita-api.herokuapp.com/verses/random' }
+    ];
+
+    let quote = '';
+    let author = 'Unknown';
+    let used = null;
+
+    for (const ep of endpoints) {
+      try {
+        const controller = new AbortController();
+        const to = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(ep.url, { cache: 'no-cache', signal: controller.signal });
+        clearTimeout(to);
+        if (!res.ok) { console.warn(`${ep.name} HTTP ${res.status}`); continue; }
+        const data = await res.json();
+        // Heuristic extraction of text/author from various APIs
+        const maybe = Array.isArray(data) ? data[0] : data;
+        quote = maybe?.q || maybe?.text || maybe?.content || maybe?.shloka || maybe?.verse || maybe?.english || '';
+        author = maybe?.a || maybe?.author || maybe?.source || maybe?.translator || author;
+        if (quote) { used = ep.name; console.info(`fetchDailyShloka: got data from ${ep.name}`); break; }
+      } catch (err) {
+        console.warn(`fetchDailyShloka ${ep.name} failed:`, err && err.message ? err.message : err);
+        // try next
+      }
+    }
+
+    if (!quote) throw new Error('No quote data from remote endpoints');
+    state.dailyShloka = { date: today, text: quote, author, source: used || 'Remote API' };
+    dailyShlokaError = '';
   } catch (e) {
+    console.warn('fetchDailyShloka error:', e && e.message ? e.message : e);
     const fallback = pickFallbackShloka();
     state.dailyShloka = { date: today, text: fallback.text, author: fallback.author, source: 'Offline fallback' };
-    dailyShlokaError = 'Could not fetch online verse; showing fallback instead.';
+    dailyShlokaError = `Could not fetch online verse (${e && e.message ? e.message : 'unknown error'}); showing fallback.`;
   } finally {
     dailyShlokaLoading = false;
     commitToDevice();
